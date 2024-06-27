@@ -1,7 +1,9 @@
 import os
 import sys
 import warnings
+import traceback
 from dotenv import load_dotenv
+from git import Repo
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
@@ -17,7 +19,7 @@ load_dotenv()
 
 sys.path.append("src/")
 
-from utils import dump, load, config
+from utils import dump, load, config, CustomException
 
 
 class Explainer:
@@ -48,3 +50,26 @@ class Explainer:
 
         else:
             raise Exception("Model not found".capitalize())
+
+    def download_source_code(self):
+        if os.path.exists(self.CONFIG["path"]["CODE_PATH"]):
+            self.CODE_PATH = self.CONFIG["path"]["CODE_PATH"]
+            self.URL = self.CONFIG["sourcecode"]["url"]
+
+            try:
+                if self.URL:
+                    Repo.clone_from(url=self.URL, to_path=self.CODE_PATH)
+                else:
+                    raise CustomException("URL not found".capitalize())
+
+            except CustomException as exception:
+                print("The exaceptio is", exception)
+                traceback.print_exc()
+        else:
+            os.makedirs(self.CONFIG["path"]["CODE_PATH"], exist_ok=True)
+            print("Try it again to access further functionalities".capitalize())
+
+
+if __name__ == "__main__":
+    explainer = Explainer()
+    explainer.download_source_code()
