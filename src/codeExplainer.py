@@ -99,6 +99,29 @@ class Explainer:
             print("The exaceptio is", exception)
             traceback.print_exc()
 
+    def database_init(self, documents=None):
+        self.database = self.CONFIG["vectorstores"]
+
+        if isinstance(documents, list):
+            if self.database["Chroma"]:
+                os.makedirs("./DB")
+
+                Chroma.from_documents(
+                    documents=documents,
+                    persist_directory="./DB",
+                    embedding=OpenAIEmbeddings(),
+                )
+
+                print("Chroma is done".capitalize())
+
+            else:
+                FAISS.from_documents(documents=documents, embedding=OpenAIEmbeddings())
+
+                print("FAISS is done".capitalize())
+
+        else:
+            raise ValueError("documents must be a list".capitalize())
+
     def generate_embeddings(self):
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=self.CONFIG["chunks"]["chunk_size"],
@@ -108,6 +131,17 @@ class Explainer:
         self.documents = self.text_splitter.split_documents(
             documents=self.generate_tokens()
         )
+
+        try:
+            self.database_init(documents=self.documents)
+
+        except ValueError as exception:
+            print("The exaceptio is", exception)
+            traceback.print_exc()
+
+        except Exception as e:
+            print("The exaceptio is", e)
+            traceback.print_exc()
 
         dump(
             value=self.documents,
@@ -119,7 +153,6 @@ class Explainer:
                 self.CONFIG["path"]["DATA_PATH"]
             )
         )
-        print(self.documents[0])
 
 
 if __name__ == "__main__":
