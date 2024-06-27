@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import warnings
 import traceback
 from dotenv import load_dotenv
@@ -196,7 +197,25 @@ class Explainer:
 
 
 if __name__ == "__main__":
-    explainer = Explainer()
-    # explainer.download_source_code()
-    # explainer.generate_tokens()
-    explainer.chatExplainer()
+    parser = argparse.ArgumentParser(description="Explain the code".capitalize())
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="./config.yml",
+        help="Define the config file".capitalize(),
+    )
+    parser.add_argument("--chat", action="store_true", help="Chat model".capitalize())
+
+    args = parser.parse_args()
+
+    if args.config and args.chat:
+
+        explainer = Explainer()
+
+        explainer.download_source_code()
+        explainer.generate_tokens()
+
+        explainer.chatExplainer()
+
+    else:
+        print("The config file is not defined".capitalize())
