@@ -69,7 +69,38 @@ class Explainer:
             os.makedirs(self.CONFIG["path"]["CODE_PATH"], exist_ok=True)
             print("Try it again to access further functionalities".capitalize())
 
+    def generate_tokens(self):
+        self.extension = self.CONFIG["analysis"]["filenames"]
+
+        try:
+
+            if (
+                self.extension == "py"
+                or self.extension == "java"
+                or self.extension == "cpp"
+            ):
+                self.loader = DirectoryLoader(
+                    path=os.path.join(
+                        self.CONFIG["path"]["CODE_PATH"],
+                    ),
+                    glob="**/*.{}".format(self.CONFIG["analysis"]["filenames"]),
+                )
+
+                self.documents = self.loader.load()
+
+                return self.documents
+
+            else:
+                raise CustomException(
+                    "File extension not found, check the config yaml file".capitalize()
+                )
+
+        except CustomException as exception:
+            print("The exaceptio is", exception)
+            traceback.print_exc()
+
 
 if __name__ == "__main__":
     explainer = Explainer()
-    explainer.download_source_code()
+    # explainer.download_source_code()
+    explainer.generate_tokens()

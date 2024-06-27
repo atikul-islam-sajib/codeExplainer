@@ -11,3 +11,7 @@ vectorstores:
 
 sourcecode:
   url: https://github.com/atikul-islam-sajib/ESRGAN.git
+
+analysis:
+  folder: "src"
+  filenames: "py"  # In this project I just used python
