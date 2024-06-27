@@ -34,29 +34,31 @@ Ensure you have the following installed:
 5. **Configure the Project**:
    Update the `config.yml` file with the appropriate paths and settings. An example `config.yml`:
    ```yaml
-   path:
-     CODE_PATH: "./source_code/"
-     DATA_PATH: "./data/"
+    path:
+    CODE_PATH: "./source_code/"
+    DATA_PATH: "./data/"
 
-   OpenAI:
-     temperature: 0.5
-     model_name: "text-davinci-003"
+    OpenAI:
+    temperature: 1.0
+    model_name: "gpt-3.5-turbo"
 
-   sourcecode:
-     url: "https://github.com/your-repo-url"
+    vectorstores:
+    Chroma: False
+    FAISS: True
 
-   analysis:
-     filenames: "py"
+    sourcecode:
+    url: https://github.com/your-repo-url
 
-   vectorstores:
-     Chroma: true
+    analysis:
+    folder: "src"
+    filenames: "py"  # In this project I just used python
 
-   chunks:
-     chunk_size: 1000
-     chunk_overlap: 200
+    chunks:
+    chunk_size: 1000
+    chunk_overlap: 200
 
-   chatExplainer:
-     chat_limit: 5
+    chatExplainer:
+    chat_limit: 5
    ```
 
 ## Usage
