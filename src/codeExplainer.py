@@ -20,6 +20,7 @@ load_dotenv()
 sys.path.append("src/")
 
 from utils import dump, load, config, CustomException
+from template import template
 
 
 class Explainer:
@@ -151,6 +152,16 @@ class Explainer:
 
         return self.documents
 
+    def define_prompt_and_memeory(self):
+        self.prompt = PromptTemplate(
+            input_variables=["context", "question", "history"], template=template
+        )
+        self.memory = ConversationBufferMemory(
+            input_key="question", memory_key="history"
+        )
+
+        return {"prompt": self.prompt, "memory": self.memory}
+
     def chatExplainer(self):
         try:
             self.vectordb = self.database_init(documents=self.generate_embeddings())
@@ -162,6 +173,26 @@ class Explainer:
             traceback.print_exc()
 
         self.retriever = self.vectordb.as_retriever()
+
+        self.chain = RetrievalQA.from_chain_type(
+            llm=self.model_init(),
+            chain_type="stuff",
+            retriever=self.retriever,
+            chain_type_kwargs={
+                "prompt": self.define_prompt_and_memeory()["prompt"],
+                "memory": self.define_prompt_and_memeory()["memory"],
+            },
+        )
+
+        self.chat_limit = self.CONFIG["chatExplainer"]["chat_limit"]
+
+        while self.chat_limit > 0:
+            self.query = input("Query: ")
+            print("Answer: ", self.chain(self.query)["result"])
+
+            self.chat_limit -= 1
+
+        print("The chat limit is completed. Try again !".capitalize())
 
 
 if __name__ == "__main__":
