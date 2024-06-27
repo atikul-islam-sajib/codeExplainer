@@ -104,9 +104,9 @@ class Explainer:
 
         if isinstance(documents, list):
             if self.database["Chroma"]:
-                os.makedirs("./DB")
+                os.makedirs("./DB", exist_ok=True)
 
-                Chroma.from_documents(
+                self.vectordb = Chroma.from_documents(
                     documents=documents,
                     persist_directory="./DB",
                     embedding=OpenAIEmbeddings(),
@@ -114,10 +114,16 @@ class Explainer:
 
                 print("Chroma is done".capitalize())
 
+                return self.vectordb
+
             else:
-                FAISS.from_documents(documents=documents, embedding=OpenAIEmbeddings())
+                self.vectordb = FAISS.from_documents(
+                    documents=documents, embedding=OpenAIEmbeddings()
+                )
 
                 print("FAISS is done".capitalize())
+
+                self.vectordb
 
         else:
             raise ValueError("documents must be a list".capitalize())
@@ -132,17 +138,6 @@ class Explainer:
             documents=self.generate_tokens()
         )
 
-        try:
-            self.database_init(documents=self.documents)
-
-        except ValueError as exception:
-            print("The exaceptio is", exception)
-            traceback.print_exc()
-
-        except Exception as e:
-            print("The exaceptio is", e)
-            traceback.print_exc()
-
         dump(
             value=self.documents,
             filename=os.path.join(self.CONFIG["path"]["DATA_PATH"], "documents.pkl"),
@@ -154,9 +149,23 @@ class Explainer:
             )
         )
 
+        return self.documents
+
+    def chatExplainer(self):
+        try:
+            self.vectordb = self.database_init(documents=self.generate_embeddings())
+        except ValueError as exception:
+            print("The exaceptio is", exception)
+            traceback.print_exc()
+        except Exception as exception:
+            print("The exaceptio is", exception)
+            traceback.print_exc()
+
+        self.retriever = self.vectordb.as_retriever()
+
 
 if __name__ == "__main__":
     explainer = Explainer()
     # explainer.download_source_code()
     # explainer.generate_tokens()
-    explainer.generate_embeddings()
+    explainer.chatExplainer()
