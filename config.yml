@@ -6,6 +6,10 @@ OpenAI:
   temperature: 1.0
   model_name: "gpt-3.5-turbo"
 
+embeddings:
+  OpenAI: False
+  HuggingFace: True
+
 vectorstores:
   Chroma: False
   FAISS: True
