@@ -4,18 +4,16 @@ from langchain.chains import RetrievalQA
 import chainlit as cl
 
 sys.path.append("src/")
-
 from src.codeExplainer import Explainer
+
+explainer = Explainer()
+explainer.download_source_code()
+explainer.generate_tokens()
 
 
 @cl.on_chat_start
 async def start():
     try:
-        explainer = Explainer()
-
-        explainer.download_source_code()
-        explainer.generate_tokens()
-
         vectordb = explainer.database_init(documents=explainer.generate_embeddings())
     except ValueError as exception:
         print("The exception is", exception)

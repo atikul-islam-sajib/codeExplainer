@@ -89,6 +89,12 @@ Ensure you have the following installed:
 python src/codeExplainer.py --config ./config.yml --chat
 ```
 
+### To run the application in the localhost
+
+```sh
+chainlit run app.py -w
+```
+
 ### Directory Structure
 
 ```

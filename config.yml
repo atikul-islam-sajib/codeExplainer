@@ -11,8 +11,8 @@ embeddings:
   HuggingFace: "sentence-transformers/all-MiniLM-L6-v2"  # You can change, just check HuggingFaceHub
 
 vectorstores:
-  Chroma: False
-  FAISS: True
+  Chroma: True
+  FAISS: False
 
 sourcecode:
   url: https://github.com/atikul-islam-sajib/AutoEncoder.git
@@ -26,4 +26,4 @@ chunks:
   chunk_overlap: 200
 
 chatExplainer:
-  chat_limit: 2
+  chat_limit: 3
