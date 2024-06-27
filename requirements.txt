@@ -8,3 +8,4 @@ langchain-core
 tiktoken
 chromadb
 faiss-cpu
+chainlit
