@@ -1,4 +1,5 @@
 import os
+import sys
 import warnings
 from dotenv import load_dotenv
 from langchain.llms import OpenAI
@@ -14,11 +15,17 @@ warnings.filterwarnings("ignore")
 
 load_dotenv()
 
+sys.path.append("src/")
+
+from utils import dump, load, config
+
 
 class Explainer:
     def __init__(self, url=None, model="OpenAI"):
         self.url = url
         self.model = model
+
+        self.CONFIG = config()
 
     def access_api_key(self):
         try:
@@ -32,8 +39,8 @@ class Explainer:
     def model_init(self):
         if self.model == "OpenAI":
             self.model = OpenAI(
-                temperature=1.0,
-                model_name="gpt-3.5-turbo",
+                temperature=self.CONFIG["OpenAI"]["temperature"],
+                model_name=self.CONFIG["OpenAI"]["model_name"],
                 openai_api_key=self.access_api_key(),
             )
 
