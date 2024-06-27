@@ -1,0 +1,35 @@
+schema: '2.0'
+stages:
+  chat:
+    cmd: python src/codeExplainer.py --config ./config.yml --chat
+    deps:
+    - path: ./.env
+      hash: md5
+      md5: ec9707dbe6b714b31d32e8afaf5ee186
+      size: 75
+    - path: ./DB
+      hash: md5
+      md5: 4b9e0d1945b037b4e1d112446f5b5385.dir
+      size: 11981540
+      nfiles: 5
+    - path: ./config.yml
+      hash: md5
+      md5: fd4ce6a7d4412001a446beacdfaec50c
+      size: 394
+    - path: ./source_code/
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: src/codeExplainer.py
+      hash: md5
+      md5: f3ff40d9bc463fad99f808efdb6eefa7
+      size: 6817
+    - path: src/template.py
+      hash: md5
+      md5: f5014af40c1f70956d3b019cc22122d8
+      size: 179
+    - path: src/utils.py
+      hash: md5
+      md5: 7b9b9221ff9bbbcdeaffee64d3eba0b2
+      size: 913

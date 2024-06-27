@@ -20,7 +20,7 @@ load_dotenv()
 
 sys.path.append("src/")
 
-from utils import dump, load, config, CustomException
+from utils import dump, load, config, clean_folder, CustomException
 from template import template
 
 
@@ -30,6 +30,9 @@ class Explainer:
         self.model = model
 
         self.CONFIG = config()
+        self.clean_folder = clean_folder()
+
+        os.makedirs(self.CONFIG["path"]["CODE_PATH"], exist_ok=True)
 
     def access_api_key(self):
         try:
@@ -68,7 +71,6 @@ class Explainer:
                 print("The exaceptio is", exception)
                 traceback.print_exc()
         else:
-            os.makedirs(self.CONFIG["path"]["CODE_PATH"], exist_ok=True)
             print("Try it again to access further functionalities".capitalize())
 
     def generate_tokens(self):

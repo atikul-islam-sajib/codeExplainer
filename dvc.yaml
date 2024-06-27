@@ -1,6 +1,6 @@
 stages:
   chat:
-    cmd: python src/codeExplainer.py --config --chat
+    cmd: python src/codeExplainer.py --config ./config.yml --chat
     deps:
       - src/codeExplainer.py
       - src/utils.py
@@ -10,10 +10,10 @@ stages:
       - ./source_code/
       - ./DB
 
-    outs:
-      - ./DB/
-        persist: true
-      - ./source_code/
-        persist: true
-      - ./data/
-        persist: true
+    # outs:
+    #   - ./DB
+    #     persist: true
+    #   - ./source_code/
+    #     persist: true
+    #   - ./data/
+    #     persist: true

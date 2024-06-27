@@ -1,4 +1,6 @@
 import yaml
+import os
+import shutil
 import joblib
 
 
@@ -30,3 +32,11 @@ class CustomException(Exception):
 
         else:
             self.message = "This is the Custom Exception".title()
+
+
+def clean_folder():
+    code_path = config()["path"]["CODE_PATH"]
+    if os.path.exists(code_path):
+        shutil.rmtree(code_path)
+    else:
+        pass

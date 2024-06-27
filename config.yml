@@ -22,4 +22,4 @@ chunks:
   chunk_overlap: 200
 
 chatExplainer:
-  chat_limit: 10
+  chat_limit: 4
