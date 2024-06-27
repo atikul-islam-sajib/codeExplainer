@@ -42,6 +42,10 @@ Ensure you have the following installed:
         temperature: 1.0
         model_name: "gpt-3.5-turbo"
 
+    embeddings:
+        OpenAI: False
+        HuggingFace: "sentence-transformers/all-MiniLM-L6-v2"  # You can change, just check HuggingFaceHub
+
     vectorstores:
         Chroma: False
         FAISS: True
