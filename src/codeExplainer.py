@@ -38,7 +38,12 @@ class Explainer:
     def access_api_key(self):
         try:
             self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-            return self.OPENAI_API_KEY
+            self.API_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
+
+            return {
+                "OPENAI_API_KEY": self.OPENAI_API_KEY,
+                "HUGGINGFACE_API_TOKEN": self.API_TOKEN,
+            }
 
         except Exception as e:
             print(e)
@@ -49,7 +54,7 @@ class Explainer:
             self.model = OpenAI(
                 temperature=self.CONFIG["OpenAI"]["temperature"],
                 model_name=self.CONFIG["OpenAI"]["model_name"],
-                openai_api_key=self.access_api_key(),
+                openai_api_key=self.access_api_key()["OPENAI_API_KEY"],
             )
 
             return self.model
@@ -114,11 +119,24 @@ class Explainer:
                 self.vectordb = Chroma.from_documents(
                     documents=documents,
                     persist_directory="./DB",
-                    embedding=OpenAIEmbeddings(),
+                    embedding=(
+                        OpenAIEmbeddings()
+                        if self.CONFIG["embeddings"]["OpenAI"]
+                        else HuggingFaceBgeEmbeddings(
+                            model_name=self.CONFIG["embeddings"]["HuggingFace"]
+                        )
+                    ),
                 )
 
                 self.vectordb = Chroma(
-                    persist_directory="./DB", embedding_function=OpenAIEmbeddings()
+                    persist_directory="./DB",
+                    embedding_function=(
+                        OpenAIEmbeddings()
+                        if self.CONFIG["embeddings"]["OpenAI"]
+                        else HuggingFaceBgeEmbeddings(
+                            model_name=self.CONFIG["embeddings"]["HuggingFace"]
+                        )
+                    ),
                 )
 
                 print("Chroma is done".capitalize())
@@ -127,7 +145,14 @@ class Explainer:
 
             else:
                 self.vectordb = FAISS.from_documents(
-                    documents=documents, embedding=OpenAIEmbeddings()
+                    documents=documents,
+                    embedding=(
+                        OpenAIEmbeddings()
+                        if self.CONFIG["embeddings"]["OpenAI"]
+                        else HuggingFaceBgeEmbeddings(
+                            model_name=self.CONFIG["embeddings"]["HuggingFace"]
+                        )
+                    ),
                 )
 
                 print("FAISS is done".capitalize())

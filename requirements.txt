@@ -3,6 +3,7 @@ pypdf
 openai
 langchain
 langchain_community
+sentence-transformers
 langchain-core
 tiktoken
 chromadb
