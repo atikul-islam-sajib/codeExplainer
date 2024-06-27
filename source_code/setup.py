@@ -1,30 +1,16 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages
+from setuptools import setup
 
+with open('requirements.txt') as f:
+    content = f.readlines()
+requirements = [x.strip() for x in content if 'git+' not in x]
 
-def requirements():
-    with open("./requirements.txt", "r") as file:
-        return file.read().splitlines()
-
-
-setup(
-    name="SRGAN",
-    version="0.1.0",
-    description="A deep learning project that is build for GAN based image RESOLUTION for the Image dataset",
-    author="Atikul Islam Sajib",
-    author_email="atikul.sajib@ptb.de",
-    url="https://github.com/atikul-islam-sajib/ESRGAN.git",  # Update with your project's GitHub repository URL
-    packages=find_packages(),
-    install_requires=requirements(),
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.9",
-    ],
-    keywords="U-Net machine-learning",
-    project_urls={
-        "Bug Tracker": "https://github.com/atikul-islam-sajib/ESRGAN.git/issues",
-        "Documentation": "https://github.com/atikul-islam-sajib/SRGAN.git",
-        "Source Code": "https://github.com/atikul-islam-sajib/ESRGAN.git",
-    },
-)
+setup(name='AugmentedHierarchicalShrinkage',
+      version="1",
+      description="Python package for master thesis",
+      packages=find_packages(),
+      install_requires=requirements,
+      # include_package_data: to install data from MANIFEST.in
+      include_package_data=True,
+      scripts=['scripts/Run_PredPerf_experiment'],
+      zip_safe=False)

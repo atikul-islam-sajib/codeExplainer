@@ -7,11 +7,11 @@ OpenAI:
   model_name: "gpt-3.5-turbo"
 
 vectorstores:
-  Chroma: True
-  FAISS: False
+  Chroma: False
+  FAISS: True
 
 sourcecode:
-  url: https://github.com/atikul-islam-sajib/ESRGAN.git
+  url: https://github.com/atikul-islam-sajib/TreeBasedModel.git
 
 analysis:
   folder: "src"
@@ -22,4 +22,4 @@ chunks:
   chunk_overlap: 200
 
 chatExplainer:
-  chat_limit: 4
+  chat_limit: 5

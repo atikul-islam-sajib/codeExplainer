@@ -1,235 +1,104 @@
-# Enhanced-Super-Resolution GAN (ESRGAN) Project
+# Augmented Hierarchical Shrinkage
 
-<img src="https://raw.githubusercontent.com/atikul-islam-sajib/Research-Assistant-Work-/main/IMG_9292.jpg" alt="AC-GAN - Medical Image Dataset Generator: Generated Image with labels">
+A python package used to develop and test an augmented version of the Hierarchical Shrinkage regularization method for random forests. In contrast to the original HS version developed by [1] we introduce an additional penalty for the node-wise degree of overfitting to minimize the influence of splits caused by the biased feature selection process in tree-based models.
 
-This project provides a complete framework for training and testing a Enhanced Super-Resolution Generative Adversarial Network (SR-GAN). It includes functionality for data preparation, model training, testing, and inference to enhance low-resolution images to high-resolution.
+We developed two methods of AugHS that use the readily available OOB samples in RF to estimate the model’s degree of overfitting: **AugHS smSHAP** and **AugHS MSE**.
 
-<img src="https://esrgan.readthedocs.io/en/latest/_images/architecture.png" alt="AC-GAN - Medical Image Dataset Generator: Generated Image with labels">
+**AugHS smSHAP** uses an unbiased feature importance measure called smooth SHAP [2] to estimate the node-wise degree of overfitting on a feature level. Whenever an uninformative split occurs, the respective split contribution is penalized, regardless of its position in the tree.
 
-## Features
+In contrast, **AugHS MSE** uses OOB data to recalculate the node values of the trees. Subsequently, we use a hypothesis testing framework to assess how much the newly calculated node values differ from their in-bag versions. If a node shows bias, we reduce its effect on the predictive outcome.
 
-| Feature                          | Description                                                                                                                                                                                                           |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Efficient Implementation**     | Utilizes an optimized SRGAN model architecture for superior performance on diverse image segmentation tasks.                                                                                                          |
-| **Custom Dataset Support**       | Features easy-to-use data loading utilities that seamlessly accommodate custom datasets, requiring minimal configuration.                                                                                             |
-| **Training and Testing Scripts** | Provides streamlined scripts for both training and testing phases, simplifying the end-to-end workflow.                                                                                                               |
-| **Visualization Tools**          | Equipped with tools for tracking training progress and visualizing segmentation outcomes, enabling clear insight into model effectiveness.                                                                            |
-| **Custom Training via CLI**      | Offers a versatile command-line interface for personalized training configurations, enhancing flexibility in model training.                                                                                          |
-| **Import Modules**               | Supports straightforward integration into various projects or workflows with well-documented Python modules, simplifying the adoption of SRGAN functionality.                                                         |
-| **Multi-Platform Support**       | Guarantees compatibility with various computational backends, including MPS for GPU acceleration on Apple devices, CPU, and CUDA for Nvidia GPU acceleration, ensuring adaptability across different hardware setups. |
+Both versions of AugHS are enclosed in the self-developed python module `TreeModelsfromScratch`, which features algorithms for decision trees and random forests for classification and regression tasks, and tools for model selection, model evaluation, and other utilities. The code for the "standard" Decision Tree and Random Forest algorithm is taken from the [MLfromscratch repository](https://github.com/patrickloeber/MLfromscratch).
 
-## Getting Started
+## Installation
 
-## Installation Instructions
-
-Follow these steps to get the project set up on your local machine:
-
-| Step | Instruction                                  | Command                                                       |
-| ---- | -------------------------------------------- | ------------------------------------------------------------- |
-| 1    | Clone this repository to your local machine. | **git clone https://github.com/atikul-islam-sajib/ESRGAN.git** |
-| 2    | Navigate into the project directory.         | **cd ESRGAN**                                                  |
-| 3    | Install the required Python packages.        | **pip install -r requirements.txt**                           |
-
-## Project Structure
-
-This project is thoughtfully organized to support the development, training, and evaluation of the srgan model efficiently. Below is a concise overview of the directory structure and their specific roles:
-
-- **checkpoints/**
-  - Stores model checkpoints during training for later resumption.
-- **best_model/**
-
-  - Contains the best-performing model checkpoints as determined by validation metrics.
-
-- **train_models/**
-
-  - Houses all model checkpoints generated throughout the training process.
-
-- **data/**
-
-  - **processed/**: Processed data ready for modeling, having undergone normalization, augmentation, or encoding.
-  - **raw/**: Original, unmodified data serving as the baseline for all preprocessing.
-
-- **logs/**
-
-  - **Log** files for debugging and tracking model training progress.
-
-- **metrics/**
-
-  - Files related to model performance metrics for evaluation purposes.
-
-- **outputs/**
-
-  - **test_images/**: Images generated during the testing phase, including segmentation outputs.
-  - **train_gif/**: GIFs compiled from training images showcasing the model's learning progress.
-  - **train_images/**: Images generated during training for performance visualization.
-
-- **research/**
-
-  - **notebooks/**: Jupyter notebooks for research, experiments, and exploratory analyses conducted during the project.
-
-- **src/**
-
-  - Source code directory containing all custom modules, scripts, and utility functions for the U-Net model.
-
-- **unittest/**
-  - Unit tests ensuring code reliability, correctness, and functionality across various project components.
-
-### Dataset Organization for ESRGAN
-
-The dataset is organized into three categories for ESRGAN. Each category directly contains paired images and their corresponding lower resolution images and higher resolution, stored together to simplify the association between lower resolution and higher resolution images .
-
-## Directory Structure:
-
-```
-dataset/
-├── HR/
-│ │ ├── 1.png
-│ │ ├── 2.png
-│ │ ├── ...
-├── LR/
-│ │ ├── 1.png
-│ │ ├── 2.png
-│ │ ├── ...
-```
-
-### User Guide Notebook - CLI
-
-For detailed documentation on the implementation and usage, visit the -> [ESRGAN Notebook - CLI](https://github.com/atikul-islam-sajib/ESRGAN/blob/main/research/notebooks/ESRGAN_CLI.ipynb).
-
-### User Guide Notebook - Custom Modules
-
-For detailed documentation on the implementation and usage, visit the -> [ESRGAN Notebook - CM](https://github.com/atikul-islam-sajib/ESRGAN/blob/main/research/notebooks/ESRGAN_CM.ipynb).
-
-## Data Versioning with DVC
-To ensure you have the correct version of the dataset and model artifacts.
-
-Reproducing the Pipeline
-To reproduce the entire pipeline and ensure consistency, use:
-
+### Clone repository
+1. Open the Terminal.
+2. Change the current working directory to the location where you want the cloned directory
+3. Clone the repository using
 ```bash
-dvc repro
+git clone git@github.com:Heity94/AugmentedHierarchicalShrinkage.git
 ```
-
-### Command Line Interface
-
-The project is controlled via a command line interface (CLI) which allows for running different operational modes such as training, testing, and inference.
-
-#### CLI Arguments
-| Argument          | Description                                  | Type   | Default |
-|-------------------|----------------------------------------------|--------|---------|
-| `--image_path`    | Path to the image dataset                    | str    | None    |
-| `--batch_size`    | Number of images per batch                   | int    | 1       |
-| `--image_size`    | Size to resize images to                     | int    | 64      |
-| `--epochs`        | Number of training epochs                    | int    | 100     |
-| `--lr`            | Learning rate                                | float  | 0.0002  |
-| `--content_loss`  | Weight of content loss                       | float  | 0.001   |
-| `--lr_scheduler`| Enable learning rate scheduler              | bool   | False   |
-| `--is_weight_init`| Apply weight initialization                  | bool   | False   |
-| `--verbose`    | Display detailed loss information            | bool   | False   |
-| `--device`        | Computation device ('cuda', 'mps', 'cpu')    | str    | 'mps'   |
-| `--adam`          | Use Adam optimizer                           | bool   | True    |
-| `--SGD`           | Use Stochastic Gradient Descent optimizer    | bool   | False   |
-| `--beta1`         | Beta1 parameter for Adam optimizer           | float  | 0.5     |
-| `--train`         | Flag to initiate training mode               | action | N/A     |
-| `--model`         | Path to a saved model for testing            | str    | None    |
-| `--test`          | Flag to initiate testing mode                | action | N/A     |
-
-### CLI Command Examples
-
-| Task                     | CUDA Command                                                                                                              | MPS Command                                                                                                              | CPU Command                                                                                                              |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| **Training a Model**     | `python cli.py --train --image_path "/path/to/dataset" --batch_size 32 --image_size 128 --epochs 50 --lr 0.001 --content_loss 0.01 --adam True --is_l1 True --device "cuda"` | `python cli.py --train --image_path "/path/to/dataset" --batch_size 32 --image_size 128 --epochs 50 --lr 0.001 --content_loss 0.01 --adam True --is_l1 True --device "mps"` | `python main.py --train --image_path "/path/to/dataset" --batch_size 32 --image_size 128 --epochs 50 --lr 0.001 --content_loss 0.01 --adam True --is_l1 True --device "cpu"` |
-| **Testing a Model**      | `python cli.py --test --model "/path/to/saved_model.pth" --device "cuda"`                                              | `python cli.py --test --model "/path/to/saved_model.pth" --device "mps"`                                              | `python cli.py --test --model "/path/to/saved_model.pth" --device "cpu"`                                              |
-
-### Notes:
-- **CUDA Command**: For systems with NVIDIA GPUs, using the `cuda` device will leverage GPU acceleration.
-- **MPS Command**: For Apple Silicon (M1, M2 chips), using the `mps` device can provide optimized performance.
-- **CPU Command**: Suitable for systems without dedicated GPU support or for testing purposes on any machine.
-
-
-#### Initializing Data Loader - Custom Modules
-```python
-loader = Loader(image_path="path/to/dataset", batch_size=32, image_size=128)
-loader.unzip_folder()
-loader.create_dataloader()
-```
-
-##### To details about dataset
-```python
-loader.plot_images()           # It will display the images from dataset
-```
-
-#### Training the Model
-```python
-trainer = Trainer(
-    epochs=100,                # Number of epochs to train the model
-    lr=0.0002,                 # Learning rate for optimizer
-    content_loss=0.1,          # Weight for content loss in the loss calculation
-    device='cuda',             # Computation device ('cuda', 'mps', 'cpu')
-    adam=True,                 # Use Adam optimizer; set to False to use SGD if implemented
-    SGD=False,                 # Use Stochastic Gradient Descent optimizer; typically False if Adam is True
-    beta1=0.5,                 # Beta1 parameter for Adam optimizer
-    lr_scheduler=False,        # Enable a learning rate scheduler
-    weight_init=False,         # Enable custom weight initialization for the models
-    verbose=True               # Display training progress and statistics
-)
-
-# Start training
-trainer.train()
-```
-
-##### Training Performances
-```python
-print(trainer.plot_history())    # It will plot the netD and netG losses for each epochs
-```
-
-#### Testing the Model
-```python
-tester = Tester(device="cuda", model="path/to/model.pth") # use mps, cpu
-test.test()
-```
-
-### Configuration for MLFlow
-
-1. **Generate a Personal Access Token on DagsHub**:
-   - Log in to [DagsHub](https://dagshub.com).
-   - Go to your user settings and generate a new personal access token under "Personal Access Tokens".
-
-2. **Set environment variables**:
-   Set the following environment variables with your DagsHub credentials:
-   ```bash
-   export MLFLOW_TRACKING_URI="https://dagshub.com/<username>/<repo_name>.mlflow"
-   export MLFLOW_TRACKING_USERNAME="<your_dagshub_username>"
-   export MLFLOW_TRACKING_PASSWORD="<your_dagshub_token>"
-   ```
-
-   Replace `<username>`, `<repo_name>`, `<your_dagshub_username>`, and `<your_dagshub_token>` with your actual DagsHub username, repository name, and personal access token.
-
-### Running the Training Script
-
-To start training and logging the experiments to DagsHub, run the following command:
-
+4. Change into the cloned directory
 ```bash
-python src/train.py
+cd AugmentedHierarchicalShrinkage/
 ```
-
-### Accessing Experiment Tracking
-
-You can access the MLflow experiment tracking UI hosted on DagsHub using the following link:
-
-[ESRGAN Experiment Tracking on DagsHub](https://dagshub.com/atikul-islam-sajib/ESRGAN/experiments/#/)
-
-### Using MLflow UI Locally
-
-If you prefer to run the MLflow UI locally, use the following command:
-
+### Create and activate virtual environment
+To avoid dependency issues we recommend to create a new virtual environment to install and run our code. Please note, that in order to follow the next steps [pyenv](https://github.com/pyenv/pyenv) and [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv) need to be installed.
+1. Create a virtual environment using `pyenv virtualenv`. You can of course use another name as `aug_hs_env` for the environment.
 ```bash
-mlflow ui
+pyenv virtualenv aug_hs_env
+```
+2. Optionally: Use `pyenv local` within the AugmentedHierarchicalShrinkage source directory to select that environment automatically:
+```bash
+pyenv local aug_hs_env
+```
+From now on, all the commands that you run in this directory (or in any sub directory) will be using `aug_hs_env` virtual env.
+
+### Install the package
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install AugmentedHierarchicalShrinkage.
+```bash
+pip install --upgrade pip
+pip install -e .
 ```
 
+## Usage
 
-## Contributing
-Contributions to improve this implementation of ESRGAN are welcome. Please follow the standard fork-branch-pull request workflow.
+After successful installation you should be able to use the `TreeModelsfromScratch` module to instantiate Random Forest models with AugHS and run and recreate the experiments in the `notebooks` folder.
 
-## License
-Specify the license under which the project is made available (e.g., MIT License).
+A detailed explanation on how to use the module to instantiate and train different RF models can be found in [`notebooks/Documentation_TreeModelsfromScratch.ipynb`](/notebooks/Documentation_TreeModelsfromScratch.ipynb)
+
+```python
+# Imports
+from TreeModelsFromScratch.RandomForest import RandomForest
+from TreeModelsFromScratch.datasets import DATASETS_CLASSIFICATION, DATASET_PATH
+from sklearn.model_selection import train_test_split
+from imodels import get_clean_dataset
+
+# prepare data (a sample "haberman" dataset)
+dset_name, dset_file, data_source = DATASETS_CLASSIFICATION[3]
+X, y, feat_names = get_clean_dataset(dset_file, data_source, DATASET_PATH)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# Instantiate and train regular RF for classification (without additional regularization)
+rf = RandomForest(n_trees=25, treetype='classification')
+rf.fit(X_train, y_train)
+y_pred = rf.predict(X_test)
+
+# Instantiate and train RF with HS applied post-hoc
+rf_hs = RandomForest(n_trees=25, treetype='classification', HShrinkage=True, HS_lambda=10)
+rf_hs.fit(X_train, y_train)
+y_pred = rf_hs.predict(X_test)
+
+# Instantiate and train RF with AugHS smSHAP applied post-hoc
+rf_aug_smSH = RandomForest(n_trees=25, treetype='classification', HS_lambda=10, oob_SHAP=True, HS_smSHAP=True)
+rf_aug_smSH.fit(X_train, y_train)
+y_pred = rf_aug_smSH.predict(X_test)
+
+# Instantiate and train RF with AugHS MSE applied post-hoc
+rf_aug_mse = RandomForest(n_trees=25, treetype='classification', HS_lambda=10, HS_nodewise_shrink_type="MSE_ratio")
+rf_aug_mse.fit(X_train, y_train)
+y_pred = rf_aug_mse.predict(X_test)
+```
+
+## Structure of the repository
+The general structure of this repository is detailed below
+```bash
+.
+├── TreeModelsFromScratch   # Python module for decision tree and random forest models
+├── scripts                 # Script to run predictive performance experiment
+├── raw_data                # Datasets used for training and evaluating the artifact
+├── notebooks               # Notebooks to run experiments, recreate original results from HS paper and compare self-developed models with sklearn and imodels implementation
+├── data                    # Experimental results, including trained models, simulation settings, and created plots
+├── MANIFEST.in
+├── README.md
+├── .gitignore
+├── requirements.txt
+└── setup.py
+```
+
+## References
+[1] Abhineet, Agarwal; Tan, Yan Shuo; Ronen, Omer; Singh, Chandan; Yu, Bin (2022): Hierarchical Shrinkage: Improving the accuracy and interpretability of tree-based models. In International Conference on Machine Learning, pp. 111–135. Available online at [https://proceedings.mlr.press/v162/agarwal22b.html](https://proceedings.mlr.press/v162/agarwal22b.html).
+
+[2] Loecher, Markus (2022): Debiasing MDI Feature Importance and SHAP Values in Tree Ensembles. In Andreas Holzinger, Peter Kieseberg, A. Min Tjoa, Edgar Weippl (Eds.): Machine Learning and Knowledge Extraction, vol. 13480. Cham: Springer International Publishing (Lecture Notes in Computer Science), pp. 114–129.

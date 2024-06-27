@@ -116,6 +116,10 @@ class Explainer:
                     embedding=OpenAIEmbeddings(),
                 )
 
+                self.vectordb = Chroma(
+                    persist_directory="./DB", embedding_function=OpenAIEmbeddings()
+                )
+
                 print("Chroma is done".capitalize())
 
                 return self.vectordb
@@ -124,10 +128,13 @@ class Explainer:
                 self.vectordb = FAISS.from_documents(
                     documents=documents, embedding=OpenAIEmbeddings()
                 )
+                FAISS(
+                    embedding_function=OpenAIEmbeddings(),
+                )
 
                 print("FAISS is done".capitalize())
 
-                self.vectordb
+                return self.vectordb
 
         else:
             raise ValueError("documents must be a list".capitalize())
