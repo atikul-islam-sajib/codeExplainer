@@ -128,9 +128,6 @@ class Explainer:
                 self.vectordb = FAISS.from_documents(
                     documents=documents, embedding=OpenAIEmbeddings()
                 )
-                FAISS(
-                    embedding_function=OpenAIEmbeddings(),
-                )
 
                 print("FAISS is done".capitalize())
 

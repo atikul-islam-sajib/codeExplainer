@@ -11,7 +11,7 @@ vectorstores:
   FAISS: True
 
 sourcecode:
-  url: https://github.com/atikul-islam-sajib/TreeBasedModel.git
+  url: https://github.com/atikul-islam-sajib/AutoEncoder.git
 
 analysis:
   folder: "src"
