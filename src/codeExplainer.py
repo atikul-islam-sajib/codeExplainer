@@ -3,6 +3,7 @@ import sys
 import argparse
 import warnings
 import traceback
+import chainlit as cl
 from dotenv import load_dotenv
 from git import Repo
 from langchain.llms import OpenAI
