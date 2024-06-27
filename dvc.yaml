@@ -10,10 +10,6 @@ stages:
       - ./source_code/
       - ./DB
 
-    # outs:
-    #   - ./DB
-    #     persist: true
-    #   - ./source_code/
-    #     persist: true
-    #   - ./data/
-    #     persist: true
+    outs:
+      - ./data/:
+          persist: true
