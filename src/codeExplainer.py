@@ -99,8 +99,31 @@ class Explainer:
             print("The exaceptio is", exception)
             traceback.print_exc()
 
+    def generate_embeddings(self):
+        self.text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.CONFIG["chunks"]["chunk_size"],
+            chunk_overlap=self.CONFIG["chunks"]["chunk_overlap"],
+        )
+
+        self.documents = self.text_splitter.split_documents(
+            documents=self.generate_tokens()
+        )
+
+        dump(
+            value=self.documents,
+            filename=os.path.join(self.CONFIG["path"]["DATA_PATH"], "documents.pkl"),
+        )
+
+        print(
+            "chunking is done and stored in the folder of {}".format(
+                self.CONFIG["path"]["DATA_PATH"]
+            )
+        )
+        print(self.documents[0])
+
 
 if __name__ == "__main__":
     explainer = Explainer()
     # explainer.download_source_code()
-    explainer.generate_tokens()
+    # explainer.generate_tokens()
+    explainer.generate_embeddings()

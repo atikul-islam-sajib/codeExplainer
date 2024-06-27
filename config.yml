@@ -1,5 +1,6 @@
 path:
   CODE_PATH: "./source_code/"
+  DATA_PATH: "./data/"
 
 OpenAI:
   temperature: 1.0
@@ -15,3 +16,7 @@ sourcecode:
 analysis:
   folder: "src"
   filenames: "py"  # In this project I just used python
+
+chunks:
+  chunk_size: 1000
+  chunk_overlap: 200
